@@ -1,0 +1,6 @@
+﻿namespace ImmediateVsRetainedMode
+{
+	class RetainedQuads
+	{
+	}
+}
