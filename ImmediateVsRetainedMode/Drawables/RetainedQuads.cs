@@ -28,6 +28,7 @@ namespace Example.Drawables
 
 		public void Dispose()
 		{
+			// for a more correct implementation of Dispose please look MS documentation
 			foreach (var quad in _retainedQuads) quad.Dispose();
 			_retainedQuads.Clear();
 		}

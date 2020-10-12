@@ -1,5 +1,4 @@
-﻿using ObjectTK.Buffers;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL4;
 using System;
 using System.Collections.Generic;
@@ -37,6 +36,7 @@ namespace Example.Drawables
 
 		public void Dispose()
 		{
+			// for a more correct implementation of Dispose please look MS documentation
 			GL.DeleteBuffer(_buffer);
 			GL.DeleteVertexArray(_vertexArray);
 		}
@@ -45,7 +45,7 @@ namespace Example.Drawables
 		{
 			GL.BindVertexArray(_vertexArray); // activate vertex array
 			GL.DrawArrays(_type, 0, _count); // draw with vertex array data
-			GL.BindVertexArray(0); // deactivate vertex array
+			//GL.BindVertexArray(0); // deactivate vertex array would be safer but also slower
 		}
 	}
 }

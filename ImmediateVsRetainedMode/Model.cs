@@ -5,9 +5,9 @@ using System.ComponentModel;
 
 namespace Example
 {
-	internal class Quads : INotifyPropertyChanged
+	internal class Model : INotifyPropertyChanged
 	{
-		public Quads(int count)
+		public Model(int count)
 		{
 			Count = count;
 		}
@@ -20,6 +20,7 @@ namespace Example
 				_count = value;
 				UpdatePoints();
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Count)));
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Points)));
 			}
 		}
 

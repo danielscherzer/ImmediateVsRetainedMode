@@ -1,6 +1,4 @@
-﻿using Example.Drawables;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK;
 using OpenTK.Input;
 using System;
 
@@ -10,39 +8,36 @@ namespace Example
 	{
 		private static void Main()
 		{
-			var quads = new Quads(10000);
+			var model = new Model(10000);
 			var window = new GameWindow(1024, 1024);
-			IDrawable createImmediate() => new ImmediateQuads(quads.Points);
-			IDrawable createRetained() => new RetainedQuads(quads.Points);
-			IDrawable createRetainedBatched() => new RetainedObjectGL(OpenTK.Graphics.OpenGL4.PrimitiveType.Quads, quads.Points);
-			
-			Func<IDrawable> currentCreator = createImmediate;
-			IDrawable drawable = currentCreator(); //after window creation because we use OpenGL
+			var view = new View(model.Points);
 
-			quads.PropertyChanged += (_, a) =>
+			model.PropertyChanged += (_, a) =>
 			{
-				if(nameof(Quads.Points) == a.PropertyName) drawable = currentCreator();
+				if (nameof(Model.Points) == a.PropertyName) 
+				{ 
+					view.Update(model.Points); 
+				}
 			};
+
 			window.KeyDown += (_, a) =>
 			{
 				switch (a.Key)
 				{
 					case Key.Escape: window.Close(); break;
-					case Key.Enter: quads.Count *= 2; break; //TODO: notify and recreate
-					case Key.Number1: currentCreator = createImmediate; drawable = currentCreator(); break;
-					case Key.Number2: currentCreator = createRetained; drawable = currentCreator(); break;
-					case Key.Number3: currentCreator = createRetainedBatched; drawable = currentCreator(); break;
+					case Key.PageUp: model.Count *= 2; break;
+					case Key.PageDown: model.Count /= 2; break;
+					case Key.Number1: view.SetImmediate(model.Points); break;
+					case Key.Number2: view.SetRetained(model.Points); break;
+					case Key.Number3: view.SetRetainedBatched(model.Points); break;
 				}
 			};
 
 			void Draw(double time)
 			{
-				Console.WriteLine($"Quads={quads.Count} {drawable.GetType().Name} {1000 * time}ms");
+				Console.WriteLine($"Quads={model.Count} {view} {1000 * time}ms");
 
-				//clear screen - what happens without?
-				GL.Clear(ClearBufferMask.ColorBufferBit);
-
-				drawable.Draw();
+				view.Draw();
 
 				window.SwapBuffers(); // buffer swap needed for double buffering
 			}

@@ -1,4 +1,4 @@
-﻿namespace Example
+﻿namespace Example.Drawables
 {
 	internal interface IDrawable
 	{
