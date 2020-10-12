@@ -1,48 +1,49 @@
-﻿using Example;
+﻿using Example.Drawables;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
-using System.Diagnostics;
 
-namespace ImmediateVsRetainedMode
+namespace Example
 {
-	class Program
+	internal class Program
 	{
-		enum State { Immediate, Retained, RetainedBatched };
-
 		private static void Main()
 		{
+			var quads = new Quads(10000);
 			var window = new GameWindow(1024, 1024);
-			var quads = new Quads(10000); //after window creation because we use OpenGL
-			//window.KeyDown += (_, a) =>
-			//{ 
-			//	switch(a.Key)
-			//	{
-			//		case Key.Number1: break;
-			//		case Key.Number2: break;
-			//		case Key.Number3: break;
-			//	}
-			//};
+			IDrawable createImmediate() => new ImmediateQuads(quads.Points);
+			IDrawable createRetained() => new RetainedQuads(quads.Points);
+			IDrawable createRetainedBatched() => new RetainedObjectGL(OpenTK.Graphics.OpenGL4.PrimitiveType.Quads, quads.Points);
+			
+			Func<IDrawable> currentCreator = createImmediate;
+			IDrawable drawable = currentCreator(); //after window creation because we use OpenGL
+
+			quads.PropertyChanged += (_, a) =>
+			{
+				if(nameof(Quads.Points) == a.PropertyName) drawable = currentCreator();
+			};
+			window.KeyDown += (_, a) =>
+			{
+				switch (a.Key)
+				{
+					case Key.Escape: window.Close(); break;
+					case Key.Enter: quads.Count *= 2; break; //TODO: notify and recreate
+					case Key.Number1: currentCreator = createImmediate; drawable = currentCreator(); break;
+					case Key.Number2: currentCreator = createRetained; drawable = currentCreator(); break;
+					case Key.Number3: currentCreator = createRetainedBatched; drawable = currentCreator(); break;
+				}
+			};
 
 			void Draw(double time)
 			{
-				var kbState = Keyboard.GetState();
-				if (kbState.IsKeyDown(Key.Escape)) window.Close();
-				if (kbState.IsKeyDown(Key.Enter)) quads.Count *= 2;
-				var state = kbState.IsKeyDown(Key.R) ? State.Retained : kbState.IsKeyDown(Key.B) ? State.RetainedBatched : State.Immediate;
+				Console.WriteLine($"Quads={quads.Count} {drawable.GetType().Name} {1000 * time}ms");
 
-				Console.WriteLine($"Quads={quads.Count} {state} {1000 * time}ms");
-				
 				//clear screen - what happens without?
 				GL.Clear(ClearBufferMask.ColorBufferBit);
 
-				switch(state)
-				{
-					case State.Immediate: quads.Draw(); break;
-					case State.Retained: quads.DrawRetained(); break;
-					case State.RetainedBatched: quads.DrawRetainedBatched(); break;
-				}
+				drawable.Draw();
+
 				window.SwapBuffers(); // buffer swap needed for double buffering
 			}
 

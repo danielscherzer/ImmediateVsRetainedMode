@@ -1,12 +1,13 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
+﻿using ObjectTK.Buffers;
+using OpenTK;
+using OpenTK.Graphics.OpenGL4;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Example
+namespace Example.Drawables
 {
-	internal class RetainedObjectGL : IDisposable
+	internal class RetainedObjectGL : IDisposable, IDrawable
 	{
 		private readonly int _buffer;
 		private readonly int _count;
