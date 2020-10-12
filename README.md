@@ -1,6 +1,6 @@
 # Immediate Vs Retained Mode
 
-[![Build status](https://ci.appveyor.com/api/projects/status/d1eqkbkgom7hd9xu?svg=true)](https://ci.appveyor.com/project/danielscherzer/batchexecute)
+[![Build status](https://ci.appveyor.com/api/projects/status/br25s3qddw6scxe4?svg=true)](https://ci.appveyor.com/project/danielscherzer/immediatevsretainedmode)
 
 ---------------------------------------
 
