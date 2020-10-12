@@ -10,10 +10,11 @@ Compare the performance of OpenGL immediate vs retained and retained batched mod
 See the [change log](CHANGELOG.md) for changes and road map.
 
 ## Features
-- `PageUp/PageDown` increase/decrease quad count
-- `1` immediate mode drawing
-- `2` retained (vertex array for each quad) mode drawing
-- `3` retained batched (one vertex array for all quads) drawing
+- Key `PageUp/PageDown` increase/decrease quad count
+- Key `1` immediate mode drawing
+- Key `2` retained (vertex array for each quad) mode drawing
+- Key `3` retained batched (one vertex array for all quads) drawing
+- Key `Escape` close program
 
 ## Errors and questions
 Please us the GitHub [Issue function](https://github.com/danielscherzer/ImmediateVsRetainedMode/issues/new) to report errors or ask questions.
