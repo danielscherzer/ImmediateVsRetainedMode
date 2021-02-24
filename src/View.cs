@@ -10,7 +10,7 @@ namespace Example
 	{
 		private IDrawable ImmediateMode(IReadOnlyList<Vector2> points) => new ImmediateQuads(points);
 		private IDrawable RetainedMode(IReadOnlyList<Vector2> points) => new RetainedQuads(points);
-		private IDrawable RetainedModeBatched(IReadOnlyList<Vector2> points) => new RetainedObjectGL(OpenTK.Graphics.OpenGL4.PrimitiveType.Quads, points);
+		private IDrawable RetainedModeBatched(IReadOnlyList<Vector2> points) => new RetainedObjectGL(PrimitiveType.Quads, points);
 
 		private Func<IReadOnlyList<Vector2>, IDrawable> currentCreator;
 		private IDrawable drawable;
