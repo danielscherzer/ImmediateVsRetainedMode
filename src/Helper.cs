@@ -37,6 +37,7 @@ internal static class Helper
 			DrawingMode.Immediate => new ImmediateQuads(quadPoints),
 			DrawingMode.NaiveRetained => new RetainedQuads(quadPoints),
 			DrawingMode.BatchedRetained => new RetainedObjectGL(PrimitiveType.Quads, quadPoints),
+			DrawingMode.BatchedDynamicCopy => new RetainedDynamicGL(PrimitiveType.Quads, quadPoints),
 			_ => throw new ArgumentOutOfRangeException(nameof(drawingMode)),
 		};
 	}
