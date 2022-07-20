@@ -1,5 +1,5 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 
@@ -9,8 +9,6 @@ namespace Example.Drawables
 	{
 		public RetainedQuads(IReadOnlyList<Vector2> points)
 		{
-			foreach (var quad in _retainedQuads) quad.Dispose();
-			_retainedQuads.Clear();
 			for (int i = 0; i < points.Count; i += 4)
 			{
 				var quad = new Vector2[] { points[i], points[i + 1], points[i + 2], points[i + 3], };
@@ -33,6 +31,6 @@ namespace Example.Drawables
 			_retainedQuads.Clear();
 		}
 
-		private readonly List<RetainedObjectGL> _retainedQuads = new List<RetainedObjectGL>();
+		private readonly List<RetainedObjectGL> _retainedQuads = new();
 	}
 }

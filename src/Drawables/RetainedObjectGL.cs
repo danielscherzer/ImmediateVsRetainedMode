@@ -1,5 +1,5 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +45,7 @@ namespace Example.Drawables
 		{
 			GL.BindVertexArray(_vertexArray); // activate vertex array
 			GL.DrawArrays(_type, 0, _count); // draw with vertex array data
-			//GL.BindVertexArray(0); // deactivate vertex array would be safer but also slower
+											 //GL.BindVertexArray(0); // deactivate vertex array would be safer but also slower
 		}
 	}
 }

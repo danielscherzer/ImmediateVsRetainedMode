@@ -1,50 +1,42 @@
-﻿using OpenTK;
-using OpenTK.Input;
+﻿using Example;
+using Example.Drawables;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
+using System.Collections.Generic;
 
-namespace Example
+var window = new GameWindow(GameWindowSettings.Default, new NativeWindowSettings { Profile = OpenTK.Windowing.Common.ContextProfile.Compatability });
+
+Observable<int> quadCount = new(10000);
+Observable<List<Vector2>> quadPoints = new(new List<Vector2>());
+Observable<DrawingMode> drawingMode = new(DrawingMode.Immediate);
+
+quadCount.OnChange += () => quadPoints.Value = Helper.CreateRandomQuads(quadCount.Value);
+quadPoints.OnChange += () => drawingMode.NotifyChange();
+
+IDrawable? drawable = null;
+drawingMode.OnChange += () => Helper.UpdateDrawable(ref drawable, drawingMode.Value, quadPoints.Value);
+
+window.KeyDown += args =>
 {
-	internal class Program
+	switch (args.Key)
 	{
-		private static void Main()
-		{
-			var model = new Model(10000);
-			var window = new GameWindow(1024, 1024);
-			var view = new View(model.Points);
-
-			model.PropertyChanged += (_, a) =>
-			{
-				if (nameof(Model.Points) == a.PropertyName) 
-				{ 
-					view.Update(model.Points); 
-				}
-			};
-
-			window.KeyDown += (_, a) =>
-			{
-				switch (a.Key)
-				{
-					case Key.Escape: window.Close(); break;
-					case Key.PageUp: model.Count *= 2; break;
-					case Key.PageDown: model.Count /= 2; break;
-					case Key.Number1: view.SetImmediate(model.Points); break;
-					case Key.Number2: view.SetRetained(model.Points); break;
-					case Key.Number3: view.SetRetainedBatched(model.Points); break;
-				}
-			};
-
-			void Draw(double time)
-			{
-				Console.WriteLine($"Quads={model.Count} {view} {1000 * time}ms");
-
-				view.Draw();
-
-				window.SwapBuffers(); // buffer swap needed for double buffering
-			}
-
-			window.RenderFrame += (s, a) => Draw(a.Time);
-			window.Run();
-
-		}
+		case Keys.Escape: window.Close(); break;
+		case Keys.PageUp: quadCount.Value *= 2; break;
+		case Keys.PageDown: quadCount.Value /= 2; break;
+		case Keys.D1: drawingMode.Value = DrawingMode.Immediate; break;
+		case Keys.D2: drawingMode.Value = DrawingMode.NaiveRetained; break;
+		case Keys.D3: drawingMode.Value = DrawingMode.BatchedRetained; break;
 	}
-}
+};
+
+window.RenderFrame += args => Console.WriteLine($"Quads={quadCount.Value} {drawingMode.Value} {1000 * args.Time}ms");
+window.RenderFrame += _ => Helper.ClearScreen();
+window.RenderFrame += _ => drawable?.Draw();
+window.RenderFrame += _ => window.SwapBuffers();
+
+quadCount.Value = 10000;
+drawingMode.Value = DrawingMode.Immediate;
+
+window.Run();
