@@ -4,22 +4,18 @@ namespace Example
 {
 	internal class Observable<TType>
 	{
-		public Observable(TType value) => this.value = value;
+		public bool HasValue => value != null;
 
-		public event Action? OnChange;
+		public event Action<TType>? OnChange;
 
-		public TType Value
+		public void Set(TType value)
 		{
-			get => value;
-			set
-			{
-				this.value = value;
-				NotifyChange();
-			}
+			this.value = value;
+			OnChange?.Invoke(value);
 		}
 
-		public void NotifyChange() => OnChange?.Invoke();
+		public static implicit operator TType(Observable<TType> observable) => observable.value ?? throw new ArgumentException("Observable value not set");
 
-		private TType value;
+		private TType? value;
 	}
 }

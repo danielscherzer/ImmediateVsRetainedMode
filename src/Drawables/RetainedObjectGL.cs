@@ -1,12 +1,12 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using Zenseless.Patterns;
 
 namespace Example.Drawables
 {
-	internal class RetainedObjectGL : IDisposable, IDrawable
+	internal class RetainedObjectGL : Disposable, IDrawable
 	{
 		private readonly int _buffer;
 		private readonly int _count;
@@ -34,18 +34,17 @@ namespace Example.Drawables
 			GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // deactivate buffer; just to be on the cautious side;
 		}
 
-		public void Dispose()
-		{
-			// for a more correct implementation of Dispose please look MS documentation
-			GL.DeleteBuffer(_buffer);
-			GL.DeleteVertexArray(_vertexArray);
-		}
-
 		public void Draw()
 		{
 			GL.BindVertexArray(_vertexArray); // activate vertex array
 			GL.DrawArrays(_type, 0, _count); // draw with vertex array data
 											 //GL.BindVertexArray(0); // deactivate vertex array would be safer but also slower
+		}
+
+		protected override void DisposeResources()
+		{
+			GL.DeleteBuffer(_buffer);
+			GL.DeleteVertexArray(_vertexArray);
 		}
 	}
 }

@@ -8,35 +8,35 @@ using System.Collections.Generic;
 
 var window = new GameWindow(GameWindowSettings.Default, new NativeWindowSettings { Profile = OpenTK.Windowing.Common.ContextProfile.Compatability });
 
-Observable<int> quadCount = new(10000);
-Observable<List<Vector2>> quadPoints = new(new List<Vector2>());
-Observable<DrawingMode> drawingMode = new(DrawingMode.Immediate);
+Observable<int> quadCount = new();
+Observable<List<Vector2>> quadPoints = new();
+Observable<DrawingMode> drawingMode = new();
 
-quadCount.OnChange += () => quadPoints.Value = Helper.CreateRandomQuads(quadCount.Value);
-quadPoints.OnChange += () => drawingMode.NotifyChange();
+quadCount.OnChange += value => quadPoints.Set(Helper.CreateRandomQuads(value));
 
 IDrawable? drawable = null;
-drawingMode.OnChange += () => Helper.UpdateDrawable(ref drawable, drawingMode.Value, quadPoints.Value);
+quadPoints.OnChange += _ => Helper.UpdateDrawable(ref drawable, drawingMode, quadPoints);
+drawingMode.OnChange += _ => Helper.UpdateDrawable(ref drawable, drawingMode, quadPoints);
 
 window.KeyDown += args =>
 {
 	switch (args.Key)
 	{
 		case Keys.Escape: window.Close(); break;
-		case Keys.PageUp: quadCount.Value *= 2; break;
-		case Keys.PageDown: quadCount.Value /= 2; break;
-		case Keys.D1: drawingMode.Value = DrawingMode.Immediate; break;
-		case Keys.D2: drawingMode.Value = DrawingMode.NaiveRetained; break;
-		case Keys.D3: drawingMode.Value = DrawingMode.BatchedRetained; break;
+		case Keys.PageUp: quadCount.Set(quadCount * 2); break;
+		case Keys.PageDown: quadCount.Set(quadCount / 2); break;
+		case Keys.D1: drawingMode.Set(DrawingMode.Immediate); break;
+		case Keys.D2: drawingMode.Set(DrawingMode.NaiveRetained); break;
+		case Keys.D3: drawingMode.Set(DrawingMode.BatchedRetained); break;
 	}
 };
 
-window.RenderFrame += args => Console.WriteLine($"Quads={quadCount.Value} {drawingMode.Value} {1000 * args.Time}ms");
+window.RenderFrame += args => Console.WriteLine($"Quads={(int)quadCount} {(DrawingMode)drawingMode} {1000 * args.Time}ms");
 window.RenderFrame += _ => Helper.ClearScreen();
 window.RenderFrame += _ => drawable?.Draw();
 window.RenderFrame += _ => window.SwapBuffers();
 
-quadCount.Value = 10000;
-drawingMode.Value = DrawingMode.Immediate;
+quadCount.Set(10000);
+drawingMode.Set(DrawingMode.Immediate);
 
 window.Run();

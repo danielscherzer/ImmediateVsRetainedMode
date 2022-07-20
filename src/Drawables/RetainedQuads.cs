@@ -1,11 +1,11 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using System;
 using System.Collections.Generic;
+using Zenseless.Patterns;
 
 namespace Example.Drawables
 {
-	internal class RetainedQuads : IDisposable, IDrawable
+	internal class RetainedQuads : Disposable, IDrawable
 	{
 		public RetainedQuads(IReadOnlyList<Vector2> points)
 		{
@@ -24,9 +24,9 @@ namespace Example.Drawables
 			}
 		}
 
-		public void Dispose()
+		protected override void DisposeResources()
 		{
-			// for a more correct implementation of Dispose please look MS documentation
+			DisposeAllFields(this);
 			foreach (var quad in _retainedQuads) quad.Dispose();
 			_retainedQuads.Clear();
 		}
