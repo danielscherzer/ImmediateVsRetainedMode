@@ -22,6 +22,6 @@ namespace Example.Drawables
 			GL.End();
 		}
 
-		private readonly IEnumerable<Vector2> _points = new List<Vector2>();
+		private readonly IEnumerable<Vector2> _points;
 	}
 }

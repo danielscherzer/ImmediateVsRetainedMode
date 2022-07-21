@@ -1,7 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Example.Drawables
 {
@@ -10,10 +8,10 @@ namespace Example.Drawables
 		private readonly PrimitiveType _type;
 		private readonly Vector2[] _array;
 
-		public RetainedDynamicGL(PrimitiveType type, IEnumerable<Vector2> points)
+		public RetainedDynamicGL(PrimitiveType type, Vector2[] points)
 		{
 			_type = type;
-			_array = points.ToArray(); //create an array (data is guarantied to be consecutive in memory
+			_array = points;
 		}
 
 		public void Draw()

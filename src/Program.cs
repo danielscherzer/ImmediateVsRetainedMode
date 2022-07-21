@@ -1,27 +1,23 @@
 ﻿using Example;
 using Example.Drawables;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
-using System.Collections.Generic;
 
 GameWindow window = new (GameWindowSettings.Default, new NativeWindowSettings { Profile = OpenTK.Windowing.Common.ContextProfile.Compatability });
 
 Observable<int> quadCount = new();
-Observable<List<Vector2>> quadPoints = new();
+Observable<Vector2[]> quadPoints = new();
 Observable<DrawingMode> drawingMode = new();
 
 quadCount.OnChange += value => quadPoints.Set(Helper.CreateRandomQuads(value));
 
 IDrawable? drawable = null;
-quadPoints.OnChange += _ => Helper.UpdateDrawable(ref drawable, drawingMode, quadPoints);
-drawingMode.OnChange += _ => Helper.UpdateDrawable(ref drawable, drawingMode, quadPoints);
-
-double sum = 0.0;
-int count = 0;
-drawingMode.OnChange += _ => { count = 0; sum = 0.0; };
-quadPoints.OnChange += _ => { count = 0; sum = 0.0; };
+void Update() => Helper.UpdateDrawable(ref drawable, drawingMode, quadPoints);
+quadPoints.OnChange += _ => Update();
+drawingMode.OnChange += _ => Update();
 
 window.KeyDown += args =>
 {
@@ -37,15 +33,22 @@ window.KeyDown += args =>
 	}
 };
 
+double sum = 0.0;
+int count = 0;
+drawingMode.OnChange += _ => { count = 0; sum = 0.0; };
+quadPoints.OnChange += _ => { count = 0; sum = 0.0; };
+
 window.RenderFrame += args =>
 {
 	sum += args.Time;
 	count++;
 	Console.WriteLine($"Quads={(int)quadCount} {(DrawingMode)drawingMode} {1000 * args.Time:F2}ms avg={1000 * sum/count:F2}ms");
 };
-window.RenderFrame += _ => Helper.ClearScreen();
+
+window.RenderFrame += _ => GL.Clear(ClearBufferMask.ColorBufferBit);
 window.RenderFrame += _ => drawable?.Draw();
 window.RenderFrame += _ => window.SwapBuffers();
+window.Resize += args => GL.Viewport(0, 0, args.Width, args.Height);
 
 quadCount.Set(10000);
 drawingMode.Set(DrawingMode.Immediate);

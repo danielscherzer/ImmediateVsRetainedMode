@@ -2,43 +2,40 @@
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
-using System.Collections.Generic;
+using Zenseless.Patterns;
 
-internal static class Helper
+namespace Example
 {
-	public static List<Vector2> CreateRandomQuads(int count)
+	internal static class Helper
 	{
-		List<Vector2> points = new();
-		const float size = 0.02f;
-		var rnd = new Random();
-		float rnd1() => (float)rnd.NextDouble() * 2f - 1f;
-
-		for (int i = 0; i < count; ++i)
+		public static Vector2[] CreateRandomQuads(int count)
 		{
-			var v = new Vector2(rnd1(), rnd1());
-			points.Add(v);
-			points.Add(v + new Vector2(size, 0f));
-			points.Add(v + new Vector2(size));
-			points.Add(v + new Vector2(0f, size));
+			Vector2[] points = new Vector2[count * 4];
+			const float size = 0.02f;
+			var rnd = new Random();
+			float rnd1() => rnd.NextFloat(-1f, 1f); // net6 NextSingle has same speed
+			for (int i = 0; i < count * 4; i += 4)
+			{
+				var v = new Vector2(rnd1(), rnd1());
+				points[i] = v;
+				points[i + 1] = v + new Vector2(size, 0f);
+				points[i + 2] = v + new Vector2(size);
+				points[i + 3] = v + new Vector2(0f, size);
+			}
+			return points;
 		}
-		return points;
-	}
 
-	internal static void ClearScreen()
-	{
-		GL.Clear(ClearBufferMask.ColorBufferBit);
-	}
-
-	internal static void UpdateDrawable(ref IDrawable? drawable, DrawingMode drawingMode, List<Vector2> quadPoints)
-	{
-		if (drawable is IDisposable disposable) disposable.Dispose();
-		drawable = drawingMode switch
+		internal static void UpdateDrawable(ref IDrawable? drawable, DrawingMode drawingMode, Vector2[] quadPoints)
 		{
-			DrawingMode.Immediate => new ImmediateQuads(quadPoints),
-			DrawingMode.NaiveRetained => new RetainedQuads(quadPoints),
-			DrawingMode.BatchedRetained => new RetainedObjectGL(PrimitiveType.Quads, quadPoints),
-			DrawingMode.BatchedDynamicCopy => new RetainedDynamicGL(PrimitiveType.Quads, quadPoints),
-			_ => throw new ArgumentOutOfRangeException(nameof(drawingMode)),
-		};
+			if (drawable is IDisposable disposable) disposable.Dispose();
+			drawable = drawingMode switch
+			{
+				DrawingMode.Immediate => new ImmediateQuads(quadPoints),
+				DrawingMode.NaiveRetained => new RetainedQuads(quadPoints),
+				DrawingMode.BatchedRetained => new RetainedObjectGL(PrimitiveType.Quads, quadPoints),
+				DrawingMode.BatchedDynamicCopy => new RetainedDynamicGL(PrimitiveType.Quads, quadPoints),
+				_ => throw new ArgumentOutOfRangeException(nameof(drawingMode)),
+			};
+		}
 	}
 }
