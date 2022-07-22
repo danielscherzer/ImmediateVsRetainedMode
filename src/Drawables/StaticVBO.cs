@@ -6,17 +6,14 @@ using Zenseless.Patterns;
 
 namespace Example.Drawables
 {
-	internal class RetainedObjectGL : Disposable, IDrawable
+	internal class StaticVBO : Disposable, IDrawable
 	{
 		private readonly int _buffer;
 		private readonly int _count;
-		private readonly PrimitiveType _type;
 		private readonly int _vertexArray;
 
-		public RetainedObjectGL(PrimitiveType type, IEnumerable<Vector2> points)
+		public StaticVBO(IEnumerable<Vector2> points)
 		{
-			_type = type;
-
 			var array = points.ToArray(); //create an array (data is guarantied to be consecutive in memory
 			_count = array.Length;
 
@@ -37,7 +34,7 @@ namespace Example.Drawables
 		public void Draw()
 		{
 			GL.BindVertexArray(_vertexArray); // activate vertex array
-			GL.DrawArrays(_type, 0, _count); // draw with vertex array data
+			GL.DrawArrays(PrimitiveType.Quads, 0, _count); // draw with vertex array data
 											 //GL.BindVertexArray(0); // deactivate vertex array would be safer but also slower
 		}
 

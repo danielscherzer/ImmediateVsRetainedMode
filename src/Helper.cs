@@ -1,5 +1,4 @@
 ﻿using Example.Drawables;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using Zenseless.Patterns;
@@ -25,15 +24,14 @@ namespace Example
 			return points;
 		}
 
-		internal static void UpdateDrawable(ref IDrawable? drawable, DrawingMode drawingMode, Vector2[] quadPoints)
+		internal static void UpdateDrawable(ref IDrawable? drawable, DrawingMode drawingMode, Vector2[] quadPoints, int batchCount)
 		{
 			if (drawable is IDisposable disposable) disposable.Dispose();
 			drawable = drawingMode switch
 			{
-				DrawingMode.Immediate => new ImmediateQuads(quadPoints),
-				DrawingMode.NaiveRetained => new RetainedQuads(quadPoints),
-				DrawingMode.BatchedRetained => new RetainedObjectGL(PrimitiveType.Quads, quadPoints),
-				DrawingMode.BatchedDynamicCopy => new RetainedDynamicGL(PrimitiveType.Quads, quadPoints),
+				DrawingMode.Immediate => new Immediate(quadPoints),
+				DrawingMode.DynamicCopy => new DynamicVA(quadPoints),
+				DrawingMode.BatchedRetained => new Batched(quadPoints, p => new StaticVBO(p), batchCount),
 				_ => throw new ArgumentOutOfRangeException(nameof(drawingMode)),
 			};
 		}

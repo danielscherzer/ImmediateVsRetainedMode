@@ -4,6 +4,12 @@ namespace Example
 {
 	internal class Observable<TType>
 	{
+		public Observable() { }
+
+		public Observable(TType value) => this.value = value;
+
+		public void DependsOn<TOther>(Observable<TOther> observable) => observable.OnChange += _ => OnChange?.Invoke(this);
+
 		public bool HasValue => value != null;
 
 		public event Action<TType>? OnChange;

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Example.Drawables
 {
-	internal class ImmediateQuads : IDrawable
+	internal class Immediate : IDrawable
 	{
-		public ImmediateQuads(IEnumerable<Vector2> points)
+		public Immediate(IEnumerable<Vector2> points)
 		{
 			_points = points;
 		}

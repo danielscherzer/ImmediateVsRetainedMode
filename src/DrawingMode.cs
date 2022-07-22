@@ -1,7 +1,6 @@
 ﻿internal enum DrawingMode
 {
 	Immediate,
-	NaiveRetained,
+	DynamicCopy,
 	BatchedRetained,
-	BatchedDynamicCopy
 }
