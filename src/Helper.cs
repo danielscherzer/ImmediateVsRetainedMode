@@ -30,7 +30,7 @@ namespace Example
 			drawable = drawingMode switch
 			{
 				DrawingMode.Immediate => new Immediate(quadPoints),
-				DrawingMode.DynamicCopy => new DynamicVA(quadPoints),
+				DrawingMode.DynamicCopy => new Batched(quadPoints, p => new DynamicVA(p), batchCount),
 				DrawingMode.BatchedRetained => new Batched(quadPoints, p => new StaticVBO(p), batchCount),
 				_ => throw new ArgumentOutOfRangeException(nameof(drawingMode)),
 			};

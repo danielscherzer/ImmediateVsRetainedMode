@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using System.Linq;
 
 namespace Example.Drawables
 {
@@ -9,7 +10,7 @@ namespace Example.Drawables
 
 		public DynamicVA(Vector2[] points)
 		{
-			_array = points;
+			_array = points.ToArray();
 		}
 
 		public void Draw()

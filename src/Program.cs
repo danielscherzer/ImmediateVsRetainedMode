@@ -28,7 +28,7 @@ window.KeyDown += args =>
 	{
 		case Keys.Escape: window.Close(); break;
 		case Keys.PageUp: quadCount.Set(quadCount * 2); break;
-		case Keys.PageDown: quadCount.Set(quadCount / 2); break;
+		case Keys.PageDown: quadCount.Set(Math.Max(1, quadCount / 2)); break;
 		case Keys.D1: drawingMode.Set(DrawingMode.Immediate); break;
 		case Keys.D2: drawingMode.Set(DrawingMode.DynamicCopy); break;
 		case Keys.D3: drawingMode.Set(DrawingMode.BatchedRetained); break;
@@ -39,6 +39,7 @@ window.KeyDown += args =>
 
 double sum = 0.0;
 int count = 0;
+batchCount.OnChange += _ => { count = 0; sum = 0.0; };
 drawingMode.OnChange += _ => { count = 0; sum = 0.0; };
 quadPoints.OnChange += _ => { count = 0; sum = 0.0; };
 
@@ -46,7 +47,10 @@ window.RenderFrame += args =>
 {
 	sum += args.Time;
 	count++;
-	Console.WriteLine($"Quads={(int)quadCount} {(DrawingMode)drawingMode} BatchCount={(int)batchCount} {1000 * args.Time:F2}ms avg={1000 * sum/count:F2}ms");
+	var message = $"Quads:{(int)quadCount} {(DrawingMode)drawingMode}";
+	if (drawingMode != DrawingMode.Immediate) message += $" Batches:{(int)batchCount}";
+	message += $" {1000 * args.Time:F2}ms avg:{1000 * sum / count:F2}ms";
+	Console.WriteLine(message);
 };
 
 window.RenderFrame += _ => GL.Clear(ClearBufferMask.ColorBufferBit);
@@ -54,5 +58,5 @@ window.RenderFrame += _ => drawable?.Draw();
 window.RenderFrame += _ => window.SwapBuffers();
 window.Resize += args => GL.Viewport(0, 0, args.Width, args.Height);
 
-quadCount.Set(1 << 13);
+quadCount.Set(10000);
 window.Run();
