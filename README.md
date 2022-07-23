@@ -4,17 +4,19 @@
 
 ---------------------------------------
 
-Compare the performance of OpenGL immediate vs retained and retained batched mode by drawing large numbers of white quads.
+Compare the performance of OpenGL immediate vs retained and retained batched mode by drawing large numbers of quads.
 
 
 See the [change log](CHANGELOG.md) for changes and road map.
 
 ## Features
+- Key `Escape` close program
 - Key `PageUp/PageDown` increase/decrease quad count
 - Key `1` immediate mode drawing
-- Key `2` retained (vertex array for each quad) mode drawing
-- Key `3` retained batched (one vertex array for all quads) drawing
-- Key `Escape` close program
+- Key `2` dynamic vertex array copy
+- Key `3` VBO retained dawing with batching
+- Key `Up/Down` Increase/Decrease batch count
+
 
 ## Errors and questions
 Please us the GitHub [Issue function](https://github.com/danielscherzer/ImmediateVsRetainedMode/issues/new) to report errors or ask questions.
