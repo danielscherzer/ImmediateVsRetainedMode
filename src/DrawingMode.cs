@@ -1,6 +1,9 @@
-﻿internal enum DrawingMode
+﻿namespace Example
 {
-	Immediate,
-	DynamicCopy,
-	BatchedRetained,
+	internal enum DrawingMode
+	{
+		Immediate,
+		DynamicCopy,
+		BatchedRetained,
+	}
 }
