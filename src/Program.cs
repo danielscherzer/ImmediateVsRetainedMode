@@ -7,14 +7,17 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 
 GameWindow window = new (GameWindowSettings.Default, new NativeWindowSettings { Profile = OpenTK.Windowing.Common.ContextProfile.Compatability });
+window.VSync = OpenTK.Windowing.Common.VSyncMode.Off;
 
 Observable<int> quadCount = new();
 Observable<Vector2[]> quadPoints = new();
 Observable<DrawingMode> drawingMode = new(DrawingMode.Immediate);
 Observable<int> batchCount = new(1);
 int Clamp(int batchCount) => Math.Clamp(batchCount, 1, quadCount);
-quadCount.OnChange += value => quadPoints.Set(Helper.CreateRandomQuads(value));
-quadCount.OnChange += value => batchCount.Set(Clamp(batchCount));
+var a = quadCount.Subscribe(value => quadPoints.Set(Helper.CreateRandomQuads(value)));
+//quadCount.OnChange += value => quadPoints.Set(Helper.CreateRandomQuads(value));
+var b = quadCount.Subscribe(value => batchCount.Set(Clamp(batchCount)));
+//quadCount.OnChange += value => batchCount.Set(Clamp(batchCount));
 
 IDrawable? drawable = null;
 void Update() => Helper.UpdateDrawable(ref drawable, drawingMode, quadPoints, batchCount);
@@ -36,7 +39,7 @@ window.KeyDown += args =>
 		case Keys.Down: batchCount.Set(Clamp(batchCount / 2)); break;
 	}
 };
-
+//TODO: Ignore first frame after change because it takes longer
 double sum = 0.0;
 int count = 0;
 batchCount.OnChange += _ => { count = 0; sum = 0.0; };
@@ -53,10 +56,19 @@ window.RenderFrame += args =>
 	Console.WriteLine(message);
 };
 
-window.RenderFrame += _ => GL.Clear(ClearBufferMask.ColorBufferBit);
+GL.Enable(EnableCap.Blend);
+GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+window.RenderFrame += _ =>
+{
+	GL.Color4(1f, 1f, 1f, 10000f/quadCount);
+	GL.Clear(ClearBufferMask.ColorBufferBit);
+};
 window.RenderFrame += _ => drawable?.Draw();
 window.RenderFrame += _ => window.SwapBuffers();
 window.Resize += args => GL.Viewport(0, 0, args.Width, args.Height);
 
 quadCount.Set(10000);
 window.Run();
+a.Dispose();
+b.Dispose();
+Console.WriteLine();
