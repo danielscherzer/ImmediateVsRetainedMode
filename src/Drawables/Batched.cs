@@ -9,12 +9,11 @@ namespace Example.Drawables
 	{
 		public Batched(Vector2[] points, Func<Vector2[], IDrawable> batchCreator, int batchCount = 1)
 		{
-			var batchSize = (points.Length / batchCount / 4) * 4; // must be a multiple of 4 for quads
+			var batchSize = Math.Max(4, (points.Length / batchCount / 4) * 4); // must be a multiple of 4 for quads
 			Vector2[] batch = new Vector2[batchSize];
 			for (int i = 0; i < points.Length; i += batchSize)
 			{
 				Array.Copy(points, i, batch, 0, Math.Min(batchSize, points.Length - i));
-				//Array.Copy(points, i, batch, 0, batchSize);
 				_batches.Add(batchCreator(batch));
 			}
 		}
