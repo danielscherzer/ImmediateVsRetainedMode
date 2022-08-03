@@ -38,21 +38,25 @@ window.KeyDown += args =>
 	}
 };
 
+//Ignore first frames after reset because it may takes longer to build batch structures
 double sum = 0.0;
-int count = 0;
-void Reset() { count = 0; sum = 0.0; }
+int count = -5;
+void Reset() { count = -5; sum = 0.0; }
 batchCount.Subscribe(_ => Reset());
 drawingMode.Subscribe(_ => Reset());
 quadPoints.Subscribe(_ => Reset());
 
 window.RenderFrame += args =>
 {
-	//Ignore first frame after change because it may takes longer to build batch structures
-	if(count > 0) sum += args.Time;
+	var message = $"Quads:{(int)quadCount:N0} {(DrawingMode)drawingMode}";
+	if (drawingMode != DrawingMode.Immediate) message += $" Batches:{(int)batchCount:N0}";
 	count++;
-	var message = $"Quads:{(int)quadCount} {(DrawingMode)drawingMode}";
-	if (drawingMode != DrawingMode.Immediate) message += $" Batches:{(int)batchCount}";
-	message += $" {1000 * args.Time:F2}ms avg:{1000 * sum / (count - 1):F2}ms";
+
+	if (count > 0)
+	{
+		sum += args.Time;
+		message += $" {1000 * args.Time:F2}ms avg:{1000 * sum / count:F2}ms";
+	}
 	Console.WriteLine(message);
 };
 
