@@ -21,6 +21,17 @@ namespace Example
 
 		public IDisposable Subscribe(Action<TType> subscription) => new Subscription(subscriptions, subscription);
 
+		public override string? ToString()
+		{
+			if (value == null)
+			{
+				return "empty";
+			}
+			return value.ToString();
+		}
+
+		public TType Value => value ?? throw new ArgumentException("Observable value not set");
+		
 		public static implicit operator TType(Observable<TType> observable) => observable.value ?? throw new ArgumentException("Observable value not set");
 
 		private sealed class Subscriptions : HashSet<Action<TType>> { }
@@ -45,6 +56,5 @@ namespace Example
 
 		private TType? value;
 		private readonly Subscriptions subscriptions = new();
-
 	}
 }

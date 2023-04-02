@@ -3,7 +3,7 @@
 	internal enum DrawingMode
 	{
 		Immediate,
-		DynamicCopy,
+		DynamicArrayCopy,
 		BatchedRetained,
 	}
 }
