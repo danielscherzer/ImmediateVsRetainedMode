@@ -31,7 +31,7 @@ namespace Example
 		}
 
 		public TType Value => value ?? throw new ArgumentException("Observable value not set");
-		
+
 		public static implicit operator TType(Observable<TType> observable) => observable.value ?? throw new ArgumentException("Observable value not set");
 
 		private sealed class Subscriptions : HashSet<Action<TType>> { }

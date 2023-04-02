@@ -1,33 +1,44 @@
 ﻿using Example.Drawables;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 
 namespace Example
 {
 	internal class DrawSystem
 	{
-		private readonly Database database;
-		IDrawable? drawable = null;
-
 		public DrawSystem(Database database)
 		{
-			this.database = database;
-			void Update() => Helper.UpdateDrawable(ref drawable, database.DrawingMode, database.QuadPoints, database.BatchCount);
-			database.QuadPoints.Subscribe(_ => Update());
+			quadPoints = Helper.CreateRandomQuads(database.QuadCount.Value);
+			drawable = Helper.CreateDrawable(database.DrawingMode, quadPoints, database.BatchCount);
+
+			void Update()
+			{
+				if (drawable is IDisposable disposable) disposable.Dispose();
+				drawable = Helper.CreateDrawable(database.DrawingMode, quadPoints, database.BatchCount);
+			}
 			database.DrawingMode.Subscribe(_ => Update());
 			database.BatchCount.Subscribe(_ => Update());
-
-			GL.Enable(EnableCap.Blend);
-			GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+			void Recalc()
+			{
+				quadPoints = Helper.CreateRandomQuads(database.QuadCount.Value);
+				Update();
+			}
+			database.QuadCount.Subscribe(_ => Recalc());
 		}
 
 		public void Draw()
 		{
-			GL.Color4(1f, 1f, 1f, MathF.Max(1f / 256f, 10000f / database.QuadCount));
+			GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
+			GL.Enable(EnableCap.Blend);
+			GL.Color4(1f, 1f, 1f, 0.5f);
 			GL.Clear(ClearBufferMask.ColorBufferBit);
-			drawable?.Draw();
+			drawable.Draw();
 		}
 
 		internal static void ResizeWindow(int width, int height) => GL.Viewport(0, 0, width, height);
+
+		private IDrawable drawable;
+		private Vector2[] quadPoints;
 	}
 }

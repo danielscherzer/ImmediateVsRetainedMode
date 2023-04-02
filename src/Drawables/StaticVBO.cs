@@ -35,7 +35,7 @@ namespace Example.Drawables
 		{
 			GL.BindVertexArray(_vertexArray); // activate vertex array
 			GL.DrawArrays(PrimitiveType.Quads, 0, _count); // draw with vertex array data
-											 //GL.BindVertexArray(0); // deactivate vertex array would be safer but also slower
+														   //GL.BindVertexArray(0); // deactivate vertex array would be safer but also slower
 		}
 
 		protected override void DisposeResources()

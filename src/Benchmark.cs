@@ -7,19 +7,11 @@ namespace Example
 {
 	internal class Benchmark
 	{
-		private Database database;
+		private readonly Database database;
 
 		public Benchmark(Database database)
 		{
 			this.database = database;
-		}
-
-		public static TimeSpan AvgTime(Action action, int repeat)
-		{
-			for (int i = 0; i < 5; ++i) action(); // warm-up
-			Stopwatch timer = Stopwatch.StartNew();
-			for (int i = 0; i < repeat; ++i) action();
-			return timer.Elapsed / repeat;
 		}
 
 		internal void WriteToFile(Action draw)
@@ -47,10 +39,18 @@ namespace Example
 			}
 			Lines(DrawingMode.Immediate, 100000, 1);
 			Lines(DrawingMode.DynamicArrayCopy, 10000000, 100000);
-			Lines(DrawingMode.BatchedRetained, 10000000, 100000);
+			Lines(DrawingMode.StaticVBO, 10000000, 100000);
 			var dir = Path.GetDirectoryName(Zenseless.Patterns.PathTools.GetCurrentProcessPath()) ?? string.Empty;
 			var fileName = Path.Combine(dir, "test.csv");
 			File.WriteAllText(fileName, sb.ToString());
+		}
+
+		private static TimeSpan AvgTime(Action action, int repeat)
+		{
+			for (int i = 0; i < 5; ++i) action(); // warm-up
+			Stopwatch timer = Stopwatch.StartNew();
+			for (int i = 0; i < repeat; ++i) action();
+			return timer.Elapsed / repeat;
 		}
 	}
 }

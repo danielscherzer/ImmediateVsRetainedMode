@@ -21,5 +21,4 @@ window.RenderFrame += _ => window.SwapBuffers();
 
 window.Resize += args => DrawSystem.ResizeWindow(args.Width, args.Height);
 
-database.QuadCount.Set(10000);
 window.Run();

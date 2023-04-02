@@ -4,6 +4,6 @@
 	{
 		Immediate,
 		DynamicArrayCopy,
-		BatchedRetained,
+		StaticVBO,
 	}
 }

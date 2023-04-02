@@ -10,7 +10,7 @@ namespace Example
 		public static Vector2[] CreateRandomQuads(int count)
 		{
 			Vector2[] points = new Vector2[count * 4];
-			const float size = 0.02f;
+			float size = 1f / MathF.Sqrt(count);
 			var rnd = new Random();
 			float rnd1() => rnd.NextFloat(-1f, 1f); // net6 NextSingle has same speed
 			for (int i = 0; i < count * 4; i += 4)
@@ -24,16 +24,12 @@ namespace Example
 			return points;
 		}
 
-		internal static void UpdateDrawable(ref IDrawable? drawable, DrawingMode drawingMode, Vector2[] quadPoints, int batchCount)
+		internal static IDrawable CreateDrawable(DrawingMode drawingMode, Vector2[] quadPoints, int batchCount) => drawingMode switch
 		{
-			if (drawable is IDisposable disposable) disposable.Dispose();
-			drawable = drawingMode switch
-			{
-				DrawingMode.Immediate => new Immediate(quadPoints),
-				DrawingMode.DynamicArrayCopy => new Batched(quadPoints, p => new DynamicVA(p), batchCount),
-				DrawingMode.BatchedRetained => new Batched(quadPoints, p => new StaticVBO(p), batchCount),
-				_ => throw new ArgumentOutOfRangeException(nameof(drawingMode)),
-			};
-		}
+			DrawingMode.Immediate => new Immediate(quadPoints),
+			DrawingMode.DynamicArrayCopy => new Batched(quadPoints, p => new DynamicVA(p), batchCount),
+			DrawingMode.StaticVBO => new Batched(quadPoints, p => new StaticVBO(p), batchCount),
+			_ => throw new ArgumentOutOfRangeException(nameof(drawingMode)),
+		};
 	}
 }

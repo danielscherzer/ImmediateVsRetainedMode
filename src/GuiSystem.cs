@@ -4,7 +4,6 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Linq;
-using System.Text;
 using Zenseless.OpenTK.GUI;
 
 internal class GuiSystem
@@ -16,7 +15,7 @@ internal class GuiSystem
 		void Reset() { count = -5; sum = 0.0; }
 		database.BatchCount.Subscribe(_ => Reset());
 		database.DrawingMode.Subscribe(_ => Reset());
-		database.QuadPoints.Subscribe(_ => Reset());
+		database.QuadCount.Subscribe(_ => Reset());
 
 		ImGuiInput input = new(window);
 		ImGuiIOPtr io = ImGui.GetIO();
@@ -63,7 +62,7 @@ internal class GuiSystem
 		{
 			IntSlider("Batch count", database.BatchCount, 1, Math.Min(10000, database.QuadCount), HintKeyText(KeyDownBatchCount, KeyUpBatchCount));
 		}
-		if(ImGui.Button("Run benchmark"))
+		if (ImGui.Button("Run benchmark"))
 		{
 			OnBenchmark?.Invoke();
 		}
