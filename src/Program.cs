@@ -5,8 +5,8 @@ using OpenTK.Windowing.Desktop;
 
 GameWindow window = new(GameWindowSettings.Default, new NativeWindowSettings() { Profile = ContextProfile.Compatability }); ;
 window.VSync = VSyncMode.Off; // For correct benchmarks
-var info = Monitors.GetMonitorFromWindow(window);
-window.Size = new Vector2i(info.HorizontalResolution, info.VerticalResolution) / 2; // set window to halve monitor size
+var monitor = Monitors.GetMonitorFromWindow(window);
+window.Size = new Vector2i(monitor.HorizontalResolution, monitor.VerticalResolution) / 2; // set window to halve monitor size
 
 Database database = new();
 DrawSystem drawSystem = new(database);
