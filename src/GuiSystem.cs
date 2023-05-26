@@ -10,6 +10,7 @@ internal class GuiSystem
 {
 	public GuiSystem(GameWindow window, Database database)
 	{
+		this.window = window;
 		this.database = database;
 
 		void Reset() { count = -5; sum = 0.0; }
@@ -17,9 +18,9 @@ internal class GuiSystem
 		database.DrawingMode.Subscribe(_ => Reset());
 		database.QuadCount.Subscribe(_ => Reset());
 
-		ImGuiInput input = new(window);
-		ImGuiIOPtr io = ImGui.GetIO();
-		io.FontGlobalScale = 2f;
+		gui = new(window, 1f);
+		gui.LoadFontDroidSans(24f);
+
 		int Clamp(int batchCount) => Math.Clamp(batchCount, 1, database.QuadCount);
 		window.KeyDown += args =>
 		{
@@ -33,8 +34,6 @@ internal class GuiSystem
 				case KeyBenchmark: OnBenchmark?.Invoke(); break;
 			}
 		};
-		window.UpdateFrame += args => input.Update(window.MouseState, window.KeyboardState, (float)args.Time); //TODO do in IMGUIinput constructor
-		window.Resize += (window) => WindowResized(window.Width, window.Height);
 	}
 
 	public event Action? OnBenchmark;
@@ -71,14 +70,13 @@ internal class GuiSystem
 			ImGui.SetTooltip(HintKeyText(KeyBenchmark));
 		}
 		ImGui.End();
-		gui.Render();
+		gui.Render(window.Size);
 	}
 
-	internal static void WindowResized(int width, int height) => ImGuiRenderer.WindowResized(width, height);
-
 	private readonly string[] modes = Enum.GetNames(typeof(DrawingMode));
+	private readonly GameWindow window;
 	private readonly Database database;
-	private readonly ImGuiRenderer gui = new();
+	private readonly ImGuiFacade gui;
 	private const Keys KeyUpQuadCount = Keys.PageUp;
 	private const Keys KeyDownQuadCount = Keys.PageDown;
 	private const Keys KeyUpBatchCount = Keys.Up;

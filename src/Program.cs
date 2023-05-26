@@ -2,8 +2,9 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using Zenseless.OpenTK;
 
-GameWindow window = new(GameWindowSettings.Default, new NativeWindowSettings() { Profile = ContextProfile.Compatability }); ;
+GameWindow window = new(GameWindowSettings.Default, ImmediateMode.NativeWindowSettings);
 window.VSync = VSyncMode.Off; // For correct benchmarks
 var monitor = Monitors.GetMonitorFromWindow(window);
 window.Size = new Vector2i(monitor.HorizontalResolution, monitor.VerticalResolution) / 2; // set window to halve monitor size
