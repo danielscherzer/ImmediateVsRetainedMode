@@ -10,7 +10,7 @@ namespace Example.Drawables
 
 		public DynamicVA(Vector2[] points)
 		{
-			_array = points.ToArray();
+			_array = points.ToArray(); // make a copy
 		}
 
 		public void Draw()

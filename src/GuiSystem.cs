@@ -70,7 +70,7 @@ internal class GuiSystem
 			ImGui.SetTooltip(HintKeyText(KeyBenchmark));
 		}
 		ImGui.End();
-		gui.Render(window.Size);
+		gui.Render(window.ClientSize);
 	}
 
 	private readonly string[] modes = Enum.GetNames(typeof(DrawingMode));
